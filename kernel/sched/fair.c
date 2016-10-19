@@ -31,9 +31,9 @@
 #include <linux/migrate.h>
 #include <linux/task_work.h>
 #include <linux/module.h>
+#include <linux/sched/core_ctl.h>
 
 #include "sched.h"
-#include "core_ctl.h"
 #include <trace/events/sched.h>
 
 static int min_budget = 60;

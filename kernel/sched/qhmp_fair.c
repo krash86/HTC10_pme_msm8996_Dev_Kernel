@@ -33,9 +33,9 @@
 #include <linux/ratelimit.h>
 
 #include <trace/events/sched.h>
+#include <linux/sched/core_ctl.h>
 
 #include "qhmp_sched.h"
-#include "core_ctl.h"
 
 /*
  * Targeted preemption latency for CPU-bound tasks:

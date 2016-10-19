@@ -77,6 +77,7 @@
 #include <linux/cpufreq.h>
 #include <linux/syscore_ops.h>
 #include <linux/list_sort.h>
+#include <linux/sched/core_ctl.h>
 
 #include <asm/switch_to.h>
 #include <asm/tlb.h>
@@ -90,7 +91,6 @@
 #endif
 
 #include "sched.h"
-#include "core_ctl.h"
 #include "../workqueue_internal.h"
 #include "../smpboot.h"
 
