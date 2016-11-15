@@ -692,6 +692,7 @@ int core_ctl_set_boost(bool boost)
 
 	return ret;
 }
+EXPORT_SYMBOL(core_ctl_set_boost);
 
 void core_ctl_check(u64 wallclock)
 {
