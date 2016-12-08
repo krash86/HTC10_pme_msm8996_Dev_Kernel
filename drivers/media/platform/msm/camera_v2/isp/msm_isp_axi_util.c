@@ -3780,7 +3780,7 @@ void msm_isp_process_axi_irq_stream(struct vfe_device *vfe_dev,
 
 	if (rc < 0) {
 		spin_unlock_irqrestore(&stream_info->lock, flags);
-		
+		/* this usually means a serious scheduling error */
 		msm_isp_halt_send_error(vfe_dev, ISP_EVENT_PING_PONG_MISMATCH);
 		return;
 	}

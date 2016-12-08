@@ -2129,6 +2129,12 @@ static int msm_compr_pointer(struct snd_compr_stream *cstream,
 		pr_debug("%s session time in gapless transition",
 			 __func__);
 
+	/*
+	 - Do not query if no buffer has been given.
+	 - Do not query on a gapless transition.
+	   Playback for the 2nd stream can start (thus returning time
+	   starting from 0) before the driver knows about EOS of first stream.
+	*/
 
 #if 0
 	if (!first_buffer && !gapless_transition) {
