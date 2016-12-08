@@ -105,9 +105,10 @@ static inline int smc_fastcall(void *fc_generic, size_t size)
 #endif
 
 #if defined(CONFIG_ARCH_MSM8996)
+#ifndef CONFIG_TRUSTONIC_TEE_LPAE
 #define CONFIG_TRUSTONIC_TEE_LPAE
 #endif
-
+#endif
 /*
  * Perform crypto clock enable/disable
  * of clocks
