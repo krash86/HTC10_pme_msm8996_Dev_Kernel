@@ -53,6 +53,7 @@ export SET_LOCAL=$SET_LOCAL
 export CCACHE=$CCACHE
 export STRIP_MODULES=$STRIP_MODULES
 export USE_SCRIPTS=$USE_SCRIPTS
+export SPLIT_DTB=$SPLIT_DTB
 export DTBTOOL=$DTBTOOL
 #export ERROR_LOG=$ERROR_LOG
 
@@ -221,7 +222,7 @@ function clean_all {
 		echo "Cleaning out $COMPRESSED_IMAGE_DIR"
 		rm -rf $MODULES_DIR/*
 		cd $COMPRESSED_IMAGE_DIR
-		rm -rf zImage
+		rm -rf zImage.gz-dtb
 		rm -rf $KERNEL
 		rm -rf $DTBIMAGE
 		echo "Removing any backups from $COMPRESSED_IMAGE_DIR"
@@ -574,6 +575,7 @@ function make_modules {
 }
 
 function make_dtb {
+		if [ "$SPLIT_DTB" == 1 ];then
 		DTB=`find . -name "*.dtb" | head -1`; echo $DTB
 		echo $DTB
 		DTBDIR=`dirname $DTB`
@@ -589,11 +591,15 @@ function make_dtb {
 		fi
 		echo `strings $DTB | grep "qcom,board-id"`
 		$DTBTOOL_DIR/$DTBTOOL $DTBVERCMD -o $COMPRESSED_IMAGE_DIR/$DTBIMAGE -s 4096 -p scripts/dtc/ $DTBDIR/
-
+fi
 }
 
 function make_boot {
+		if [ "$SPLIT_DTB" == 1 ];then
 		cp -vr $ZIMAGE_DIR/Image $COMPRESSED_IMAGE_DIR/zImage
+		else
+		cp -vr $ZIMAGE_DIR/Image.gz-dtb $COMPRESSED_IMAGE_DIR/zImage.gz-dtb
+		fi
 }
 
 function make_zip {
@@ -641,7 +647,8 @@ cmd=(dialog --keep-tite --menu "Select options:" 22 76 16)
 
 options=(1 "HTC10"
 	 2 "HTC10 Test"
-         3 "Build All")
+	 3 "MSM Stock"
+         4 "Build All")
 
 choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
@@ -656,7 +663,11 @@ do
 		DEFCONFIG="htc10_test_defconfig"
 		break;;
 		
-	3) build_all
+	3)	VARIANT="msm"
+		DEFCONFIG="msm_defconfig"
+		break;;
+		
+	4) build_all
 	  break;;
 		
     esac
