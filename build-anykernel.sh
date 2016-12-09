@@ -43,6 +43,7 @@ TestBuild=0
 export ERROR_LOG=ERRORS
 export LOCALVERSION=$LOCALVERSION
 export CROSS_COMPILE=$CROSS_COMPILE
+export OUTPUT_DIR=$OUTPUT_DIR
 export STRIP=$STRIP
 export CHAIN=$CHAIN
 export ARCH=$ARCH
@@ -80,6 +81,7 @@ COPY_ZIP="$COPY_ZIP" >&2
 ZIMAGE_DIR="$ZIMAGE_DIR" >&2
 STAND_ALONE_UCI_DIR="$STAND_ALONE_UCI_DIR" >&2
 DTBTOOL_DIR="$DTBTOOL_DIR" >&2
+OUTPUT_DIR="$OUTPUT_DIR" >&2
 #################################################
 
 #######################################################
@@ -234,6 +236,10 @@ function clean_all {
 		rm -rf *.bak
 		rm -rf *.zip
 		cd $KERNEL_DIR
+		if [ -e "$OUTPUT_DIR" ]; then
+		echo "Deleting $(OUTPUT_DIR)."
+		rm -rf $OUTPUT_DIR
+		fi
 		echo "Deleting arch/arm64/boot/*.dtb's"
 		rm -rf arch/arm64/boot/*dtb
 		rm -rf arch/arm64/boot/dts/*dtb
@@ -244,6 +250,7 @@ function clean_all {
 		echo "Deleting firmware/synaptics/p1/*.gen.*"
 		rm -rf firmware/synaptics/p1/*gen*
 		echo
+		echo "Running Make Clean and Make MrProper"
 		make clean && make mrproper
 }
 
@@ -263,11 +270,6 @@ function change_variant {
 		sed -i '12s/.*/device.name1='$TAG'/' anykernel.sh
 		sed -i '13s/.*/device.name2=LG-'$TAG'/' anykernel.sh
 		cd $KERNEL_DIR
-		#cd $REPACK_DIR
-        #sed -i 's/d850/$VARIANT/g; s/d851/$VARIANT/g; s/d852/$VARIANT/g; s/d855/$VARIANT/g; s/f400/$VARIANT/g; s/ls990/$VARIANT/g; s/vs985/$VARIANT/g/g' anykernel.sh
-		#UP_CASE=$VARIANT | tr '[:upper:]' '[:lower:]'
-		#sed -i 's/D850/$VARIANT/g; s/D851/$VARIANT/g; s/D852/$VARIANT/g; s/D855/$VARIANT/g; s/F400/$VARIANT/g; s/LS990/$VARIANT/g; s/VS985/$VARIANT/g/g' anykernel.sh
-		#cd $KERNEL_DIR
 }
 
 function show_log {
@@ -548,8 +550,9 @@ function make_kernel {
 		TIME_START
 		SET_LOCALVERSION
 		echo
-		make $DEFCONFIG
-		make $THREAD INSTALL_MOD_STRIP=1
+		mkdir -p $OUTPUT_DIR
+		make O=$OUTPUT_DIR $DEFCONFIG
+		make O=$OUTPUT_DIR $THREAD INSTALL_MOD_STRIP=1
 }
 
 function make_modules {
@@ -582,11 +585,9 @@ function make_dtb {
 		echo $DTBDIR
 		if [[ -z `strings $DTB | grep "qcom,board-id"` ]] ; then
 		DTBVERCMD="--force-v3"
-#		DTBVERCMD="-2"
 		echo $DTBVERCMD
 		else
 		DTBVERCMD="--force-v3"
-#		DTBVERCMD="-2"
 		echo $DTBVERCMD
 		fi
 		echo `strings $DTB | grep "qcom,board-id"`
