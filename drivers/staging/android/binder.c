@@ -1748,7 +1748,7 @@ static void binder_transaction(struct binder_proc *proc,
 			trace_binder_transaction_fd(t, fp->handle, target_fd);
 			binder_debug(BINDER_DEBUG_TRANSACTION,
 				     "        fd %d -> %d\n", fp->handle, target_fd);
-			
+			/* TODO: fput? */
 			fp->binder = 0;
 			fp->handle = target_fd;
 		} break;
