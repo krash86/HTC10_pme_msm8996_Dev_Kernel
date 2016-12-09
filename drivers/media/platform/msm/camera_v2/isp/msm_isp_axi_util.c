@@ -452,6 +452,8 @@ int msm_isp_axi_check_stream_state(
 		}
 		stream_info = &axi_data->stream_info[
 			HANDLE_TO_IDX(stream_cfg_cmd->stream_handle[i])];
+		if (stream_info->state == AVAILABLE)
+			continue;
 		spin_lock_irqsave(&stream_info->lock, flags);
 		if (stream_info->state != valid_state) {
 			if ((stream_info->state == PAUSING ||
@@ -1006,7 +1008,7 @@ void msm_isp_notify(struct vfe_device *vfe_dev, uint32_t event_type,
 			spin_unlock_irqrestore(&vfe_dev->common_data->
 				common_dev_data_lock, flags);
 		} else {
-			if (frame_src == VFE_PIX_0) {
+			if (frame_src <= VFE_RAW_2) {
 				msm_isp_check_for_output_error(vfe_dev, ts,
 					&event_data.u.sof_info);
 			}
