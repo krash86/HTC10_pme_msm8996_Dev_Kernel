@@ -51,9 +51,6 @@ module_param(min_budget, int, 0755);
  *  run vmstat and monitor the context-switches (cs) field)
  */
  
-static int min_budget = 60;
-module_param(min_budget, int, 0755);
- 
 #ifdef CONFIG_ZEN_INTERACTIVE
 unsigned int sysctl_sched_latency = 3000000ULL;
 unsigned int normalized_sysctl_sched_latency = 3000000ULL;
