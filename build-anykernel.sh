@@ -810,6 +810,73 @@ function tc_changedestro() {
 }
 
 ## Change ToolChains ##
+function defconfig_change() {
+    fileroot=$DEFCONFIGS
+    IFS_BAK=$IFS
+    IFS=$'\n' # wegen Filenamen mit Blanks
+    array=( $(ls $fileroot) )
+    n=0
+    for item in ${array[@]}
+    do
+        menuitems="$menuitems $n ${item// /_}" # subst. Blanks with "_"  
+        let n+=1
+    done
+    IFS=$IFS_BAK
+    dialog --backtitle "ToolChain Selection:" \
+           --title "Select a Toolchain:" --menu \
+           "Choose one of the available Toolchains:" 16 58 8 $menuitems 2> $_temp
+    if [ $? -eq 0 ]; then
+        item=`cat $_temp`
+        selection=${array[$(cat $_temp)]}
+		#TC_OLD="$TC_NAME"
+		DEFCONFIG="$selection"
+        dialog --msgbox "You choose:\nNo. $item --> $selection" 6 50
+echo "test"
+    fi
+## Clean Left over Garbage Files Y/N ##
+dialog --title "Clean Garbage Files" \
+	--backtitle "Clean Junk From Build Dir" \
+	--yesno "Do you want to clean garbage files ? \n\
+	Its a good idea do say yes here.." 7 60
+ 
+	# Get exit status
+	# 0 means user hit [yes] button.
+	# 1 means user hit [no] button.
+	# 255 means user hit [Esc] key.
+	response=$?
+	case $response in
+	0) clean_all
+	   buildkernel_msg;;
+	1) echo "No Change";;
+	255) echo "[ESC] key pressed.";;
+esac
+
+##  Build Kernel Y/N ##
+dialog --title "Build Kernel" \
+	--backtitle "Linux Shell Script Tutorial Example" \
+	--yesno "You are about to Build Kernel For $VARIANT, \n\
+	Are you sure you want to build Kernel ?" 7 60
+ 
+	# Get exit status
+	# 0 means user hit [yes] button.
+	# 1 means user hit [no] button.
+	# 255 means user hit [Esc] key.
+	response=$?
+	case $response in
+	0) 	build_log
+#		change_variant <--- Not needed for HTC Device #
+		make_kernel
+		make_dtb
+		make_modules
+		make_boot
+		make_zip
+		finished_build;;
+	1) echo "File not deleted.";;
+	255) echo "[ESC] key pressed.";;
+esac
+}
+
+## Change ToolChains ##
 function tc_change() {
     fileroot=$TOOLCHAIN_DIR/${TC_DESTRO}
     IFS_BAK=$IFS
@@ -893,6 +960,7 @@ dialog --clear  --help-button --backtitle "Linux Shell Script Tutorial" \
 		"Build_Zip" "Build Final Kernel Zip" \
 		"Settings" "Settings" \
 		"Test" "Testing Stage Area" \
+		"Defconfig" "Change Defconfig" \
 		"Exit" "Exit to the shell" 2>"${INPUT}"
  
 	menuitem=$(<"${INPUT}")
@@ -911,6 +979,7 @@ case $menuitem in
 		Build_Zip) make_zip; exit;;
 		Settings) menu_settings ;;
 		Test) script_settings ; exit ;;
+		Defconfig) defconfig_change ;;
 		Exit) CLEAN_UP; exit;;
 		Cancel) CLEAN_UP; exit ;;
 		255) echo "Cancel"; exit;;
