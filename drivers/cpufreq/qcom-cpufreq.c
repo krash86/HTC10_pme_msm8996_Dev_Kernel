@@ -44,7 +44,7 @@ static DEFINE_MUTEX(l2bw_lock);
 
 // Little Cluster Freq
 //static unsigned long arg_cpu_max_c1 = 1593600;
-static unsigned long arg_cpu_max_c1 = 1728000;
+static unsigned long arg_cpu_max_c1 = 1824000;
 
 static int __init cpufreq_read_cpu_max_c1(char *cpu_max_c1)
 {
