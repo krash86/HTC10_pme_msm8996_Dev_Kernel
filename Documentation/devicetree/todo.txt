@@ -8,3 +8,4 @@ Todo list for devicetree:
 - Document node lifecycle for CONFIG_OF_DYNAMIC
 - Always set ->full_name at of_attach_node() time
 - pseries: Get rid of open-coded tree modification from arch/powerpc/platforms/pseries/dlpar.c
+N:      Michael Harrell <eliminater74@gmail.com> (The Nebula Project) (EAS WORK: Started 01/22/2017)

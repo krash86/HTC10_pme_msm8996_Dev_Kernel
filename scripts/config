@@ -1,5 +1,6 @@
 #!/bin/bash
 # Manipulate options in a .config file from the command line
+# N:      Michael Harrell <eliminater74@gmail.com> (The Nebula Project) (EAS WORK: Started 01/22/2017)
 
 myname=${0##*/}
 
